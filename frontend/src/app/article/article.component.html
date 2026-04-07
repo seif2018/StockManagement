@@ -1,0 +1,168 @@
+<div class="stock-container">
+  <!-- En-tête -->
+  <div class="header">
+    <h1>📦 Gestion des stocks</h1>
+  </div>
+
+  <!-- Grille des 3 formulaires -->
+  <div class="form-grid">
+    <!-- Ajout article -->
+    <mat-card>
+      <mat-card-title>➕ Nouvel article</mat-card-title>
+      <mat-card-content>
+        <form [formGroup]="articleForm" (ngSubmit)="onCreateArticle()">
+          <mat-form-field appearance="outline">
+            <mat-label>Référence (13 chiffres)</mat-label>
+            <input matInput formControlName="reference">
+            <mat-error *ngIf="articleForm.get('reference')?.invalid && (articleForm.get('reference')?.touched || articleForm.get('reference')?.dirty)">
+              13 chiffres requis
+            </mat-error>
+          </mat-form-field>
+          <mat-form-field appearance="outline">
+            <mat-label>Nom</mat-label>
+            <input matInput formControlName="nom">
+          </mat-form-field>
+          <div class="two-columns">
+            <mat-form-field appearance="outline">
+              <mat-label>Prix HT</mat-label>
+              <input matInput type="number" formControlName="prixHT" step="0.01">
+              <mat-error>Prix > 0</mat-error>
+            </mat-form-field>
+            <mat-form-field appearance="outline">
+              <mat-label>Type</mat-label>
+              <mat-select formControlName="typeArticle">
+                <mat-option value="Alimentaire">Alimentaire</mat-option>
+                <mat-option value="NonAlimentaire">Non alimentaire</mat-option>
+              </mat-select>
+            </mat-form-field>
+          </div>
+          <ng-container *ngIf="articleForm.get('typeArticle')?.value === 'Alimentaire'">
+            <div class="two-columns">
+              <mat-form-field appearance="outline">
+                <mat-label>DLC</mat-label>
+                <input matInput [matDatepicker]="picker" formControlName="dlc">
+                <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
+                <mat-datepicker #picker></mat-datepicker>
+                <mat-error>DLC obligatoire</mat-error>
+              </mat-form-field>
+              <mat-form-field appearance="outline">
+                <mat-label>Type de vente</mat-label>
+                <mat-select formControlName="typeVente">
+                  <mat-option value="Emporter">Emporter</mat-option>
+                  <mat-option value="SurPlace">Sur place</mat-option>
+                  <mat-option value="LesDeux">Les deux</mat-option>
+                </mat-select>
+              </mat-form-field>
+            </div>
+          </ng-container>
+          <ng-container *ngIf="articleForm.get('typeArticle')?.value === 'NonAlimentaire'">
+            <mat-form-field appearance="outline">
+              <mat-label>Packaging</mat-label>
+              <mat-select formControlName="packaging">
+                <mat-option value="Neuf">Neuf</mat-option>
+                <mat-option value="Reconditionne">Reconditionné</mat-option>
+                <mat-option value="Invendable">Invendable</mat-option>
+              </mat-select>
+            </mat-form-field>
+          </ng-container>
+          <button mat-raised-button color="primary" type="submit" [disabled]="articleForm.invalid">Créer</button>
+        </form>
+      </mat-card-content>
+    </mat-card>
+
+    <!-- Approvisionnement -->
+    <mat-card>
+      <mat-card-title>📥 Approvisionnement</mat-card-title>
+      <mat-card-content>
+        <form [formGroup]="approForm" (ngSubmit)="onApprovisionner()">
+          <mat-form-field appearance="outline">
+            <mat-label>Référence</mat-label>
+            <input matInput formControlName="reference">
+            <mat-error>13 chiffres requis</mat-error>
+          </mat-form-field>
+          <mat-form-field appearance="outline">
+            <mat-label>Quantité</mat-label>
+            <input matInput type="number" formControlName="quantite">
+            <mat-error>Quantité ≥ 1</mat-error>
+          </mat-form-field>
+          <button mat-raised-button color="accent" type="submit" [disabled]="approForm.invalid">Ajouter</button>
+        </form>
+      </mat-card-content>
+    </mat-card>
+
+    <!-- Inventaire -->
+    <mat-card>
+      <mat-card-title>🔄 Inventaire</mat-card-title>
+      <mat-card-content>
+        <form [formGroup]="inventaireForm" (ngSubmit)="onInventaire()">
+          <mat-form-field appearance="outline">
+            <mat-label>Référence</mat-label>
+            <input matInput formControlName="reference">
+            <mat-error>13 chiffres requis</mat-error>
+          </mat-form-field>
+          <mat-form-field appearance="outline">
+            <mat-label>Nouvelle quantité</mat-label>
+            <input matInput type="number" formControlName="nouvelleQuantite">
+            <mat-error>Quantité ≥ 0</mat-error>
+          </mat-form-field>
+          <button mat-raised-button color="warn" type="submit" [disabled]="inventaireForm.invalid">Ajuster</button>
+        </form>
+      </mat-card-content>
+    </mat-card>
+  </div>
+
+  <!-- Liste des articles -->
+  <mat-card>
+    <mat-card-title>📋 Liste des articles</mat-card-title>
+    <mat-card-content>
+      <div class="table-wrapper">
+        <table mat-table [dataSource]="articles">
+          <ng-container matColumnDef="reference">
+            <th mat-header-cell *matHeaderCellDef> Réf. </th>
+            <td mat-cell *matCellDef="let article"> {{article.reference}} </td>
+          </ng-container>
+          <ng-container matColumnDef="nom">
+            <th mat-header-cell *matHeaderCellDef> Nom </th>
+            <td mat-cell *matCellDef="let article"> {{article.nom}} </td>
+          </ng-container>
+          <ng-container matColumnDef="prixTTC">
+            <th mat-header-cell *matHeaderCellDef> Prix TTC </th>
+            <td mat-cell *matCellDef="let article"> {{article.prixTTC}} € </td>
+          </ng-container>
+          <ng-container matColumnDef="quantiteStock">
+            <th mat-header-cell *matHeaderCellDef> Stock </th>
+            <td mat-cell *matCellDef="let article"> 
+              <span [class.stock-zero]="article.quantiteStock === 0">{{article.quantiteStock}}</span>
+            </td>
+          </ng-container>
+          <ng-container matColumnDef="type">
+            <th mat-header-cell *matHeaderCellDef> Type </th>
+            <td mat-cell *matCellDef="let article"> {{article.typeArticle}} </td>
+          </ng-container>
+          <ng-container matColumnDef="actions">
+            <th mat-header-cell *matHeaderCellDef> Actions </th>
+            <td mat-cell *matCellDef="let article">
+              <button mat-icon-button color="primary" (click)="onEdit(article)" matTooltip="Modifier">
+                <mat-icon>edit</mat-icon>
+              </button>
+              <button mat-icon-button color="warn" (click)="onDelete(article.reference)" matTooltip="Supprimer">
+                <mat-icon>delete</mat-icon>
+              </button>
+            </td>
+          </ng-container>
+          <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+          <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+        </table>
+      </div>
+      <div class="pagination">
+        <button mat-stroked-button (click)="previousPage()" [disabled]="currentPage === 1">
+          <mat-icon>chevron_left</mat-icon> Précédent
+        </button>
+        <span>Page {{currentPage}} / {{totalPages}}</span>
+        <button mat-stroked-button (click)="nextPage()" [disabled]="currentPage === totalPages">
+          Suivant <mat-icon>chevron_right</mat-icon>
+        </button>
+      </div>
+    </mat-card-content>
+  </mat-card>
+</div>

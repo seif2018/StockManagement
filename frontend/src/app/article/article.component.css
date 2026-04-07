@@ -1,0 +1,100 @@
+.stock-container {
+  padding: 24px;
+  max-width: 1600px;
+  margin: 0 auto;
+}
+
+.header h1 {
+  margin: 0 0 24px 0;
+  font-size: 1.8rem;
+  font-weight: 500;
+}
+
+/* Grille responsive pour les 3 formulaires */
+.form-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+  gap: 20px;
+  margin-bottom: 24px;
+}
+
+/* Amélioration des cartes */
+mat-card {
+  border-radius: 20px;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+  transition: box-shadow 0.2s;
+}
+mat-card:hover {
+  box-shadow: 0 8px 24px rgba(0,0,0,0.1);
+}
+mat-card-title {
+  font-size: 1.2rem;
+  font-weight: 500;
+  margin-bottom: 16px;
+}
+
+/* Champs de formulaire */
+mat-form-field {
+  width: 100%;
+  margin-bottom: 12px;
+}
+.two-columns {
+  display: flex;
+  gap: 12px;
+}
+.two-columns mat-form-field {
+  flex: 1;
+}
+
+/* Boutons pleine largeur */
+button[type="submit"] {
+  width: 100%;
+  border-radius: 40px;
+  padding: 8px;
+  font-weight: 500;
+}
+
+/* Tableau compact */
+.table-wrapper {
+  overflow-x: auto;
+}
+.mat-table {
+  width: 100%;
+  font-size: 0.85rem;
+}
+.mat-header-cell, .mat-cell {
+  padding: 8px 12px;
+}
+.stock-zero {
+  color: #f44336;
+  font-weight: 500;
+}
+
+/* Pagination */
+.pagination {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-top: 20px;
+  gap: 12px;
+}
+.pagination button {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+}
+
+/* Responsive : sur petit écran, les deux colonnes deviennent une seule */
+@media (max-width: 600px) {
+  .stock-container {
+    padding: 16px;
+  }
+  .two-columns {
+    flex-direction: column;
+    gap: 0;
+  }
+  .pagination {
+    flex-wrap: wrap;
+    justify-content: center;
+  }
+}

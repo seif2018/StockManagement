@@ -1,0 +1,54 @@
+<div class="dialog-container">
+  <h2 mat-dialog-title>✏️ Modifier l'article</h2>
+  <mat-dialog-content>
+    <form [formGroup]="editForm">
+      <mat-form-field appearance="outline">
+        <mat-label>Référence (non modifiable)</mat-label>
+        <input matInput [value]="data.article.reference" disabled>
+      </mat-form-field>
+      <mat-form-field appearance="outline">
+        <mat-label>Nom</mat-label>
+        <input matInput formControlName="nom" required>
+      </mat-form-field>
+      <mat-form-field appearance="outline">
+        <mat-label>Prix HT</mat-label>
+        <input matInput type="number" formControlName="prixHT" step="0.01" required>
+      <mat-error *ngIf="editForm.get('prixHT')?.hasError('required')">Prix requis</mat-error>
+      <mat-error *ngIf="editForm.get('prixHT')?.hasError('min')">Le prix HT doit être supérieur à 0</mat-error>
+      </mat-form-field>
+
+      <ng-container *ngIf="data.article.typeArticle === 'Alimentaire'">
+        <mat-form-field appearance="outline">
+          <mat-label>DLC</mat-label>
+          <input matInput [matDatepicker]="picker" formControlName="dlc" required>
+        <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
+        <mat-datepicker #picker></mat-datepicker>
+        <mat-error *ngIf="editForm.get('dlc')?.hasError('required')">La DLC est obligatoire</mat-error>
+        </mat-form-field>
+        <mat-form-field appearance="outline">
+          <mat-label>Type de vente</mat-label>
+          <mat-select formControlName="typeVente">
+            <mat-option value="Emporter">Emporter</mat-option>
+            <mat-option value="SurPlace">Sur place</mat-option>
+            <mat-option value="LesDeux">Les deux</mat-option>
+          </mat-select>
+        </mat-form-field>
+      </ng-container>
+
+      <ng-container *ngIf="data.article.typeArticle === 'NonAlimentaire'">
+        <mat-form-field appearance="outline">
+          <mat-label>Packaging</mat-label>
+          <mat-select formControlName="packaging">
+            <mat-option value="Neuf">Neuf</mat-option>
+            <mat-option value="Reconditionne">Reconditionné</mat-option>
+            <mat-option value="Invendable">Invendable</mat-option>
+          </mat-select>
+        </mat-form-field>
+      </ng-container>
+    </form>
+  </mat-dialog-content>
+  <mat-dialog-actions align="end">
+    <button mat-button (click)="onCancel()">Annuler</button>
+    <button mat-raised-button color="primary" (click)="onSave()" [disabled]="editForm.invalid">Enregistrer</button>
+  </mat-dialog-actions>
+</div>
