@@ -9,6 +9,45 @@
 
 ---
 
+## 📌 Choix techniques et hypothèses
+
+- **Architecture** : Clean Architecture (hexagonale) avec séparation Domain / Application / Infrastructure / API.
+- **CQRS** : implémenté via **MediatR** (séparation commandes/requêtes).
+- **DDD** : utilisation d’agrégats (`Article`), de value objects (`ReferenceEAN13`, `Prix`), d’événements de domaine (`StockUpdatedEvent`).
+- **Base de données** : SQL Server (Code First avec EF Core) – index unique sur la référence EAN13.
+- **Frontend** : Angular 17 (standalone components) + Angular Material pour une UI moderne et responsive.
+- **Temps réel** : SignalR pour notifier tous les clients lors d’une mise à jour de stock.
+- **Messagerie asynchrone** : Kafka (producteur) – les événements de mise à jour de stock sont publiés (consommateur non implémenté mais possible).
+- **Hypothèses** :
+  - Une référence EAN13 est unique et au format 13 chiffres.
+  - Le prix HT doit être strictement positif.
+  - Un approvisionnement se fait avec une quantité ≥ 1.
+  - Un inventaire peut ramener la quantité à zéro (mais pas négative).
+  - La DLC est obligatoire pour les articles alimentaires.
+  - Le stock vendable est simplement la quantité en stock actuelle (pas de notion de seuil ou de réservation).
+
+---
+
+## 🤖 IA utilisée
+
+**ChatGPT (GPT-5 mini)** 
+
+## 💬 Usages de l’IA
+
+
+- Assistance pour l’écriture des handlers, des commandes/queries MediatR.
+- Débogage et correction des erreurs (ex: `HasConversion`).
+- Rédaction du README .
+
+
+---
+
+## ⏱️ Temps passé
+
+Environ **12 heures** réparties sur plusieurs sessions (conception, développement, tests, rédaction de la documentation).
+
+---
+
 ## ✨ Aperçu
 
 | Module | Fonctionnalités |
