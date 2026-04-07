@@ -87,7 +87,7 @@
 
 1️⃣ Cloner le dépôt
 
-git clone https://github.com/votre-compte/StockManagement.git
+git clone https://github.com/seif2018/StockManagement.git
 cd StockManagement
 
 2️⃣ Configurer la base de données
